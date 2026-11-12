@@ -28,6 +28,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- WebClient for non-blocking HTTP calls -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webclient</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
