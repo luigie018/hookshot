@@ -1,0 +1,73 @@
+
+databaseChangeLog:
+  - changeSet:
+      id: 002-create-conversation-members
+      author: Luigie
+
+      changes:
+        - createTable:
+            tableName: conversation_members
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: conversation_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: joined_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: left_at
+                  type: TIMESTAMP WITH TIME ZONE
+
+        - addForeignKeyConstraint:
+            baseTableName: conversation_members
+            baseColumnNames: conversation_id
+            referencedTableName: conversations
+            referencedColumnNames: id
+            constraintName: fk_member_conversation
+
+        - addUniqueConstraint:
+            tableName: conversation_members
+            columnNames: conversation_id, user_id
+            constraintName: uq_conversation_member
+
+        - createIndex:
+            tableName: conversation_members
+            indexName: idx_member_user
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: conversation_id
+
+        - sql:
+            sql: >
+              ALTER TABLE conversation_members
+              ADD CONSTRAINT chk_member_dates
+              CHECK (
+                left_at IS NULL
+                OR left_at >= joined_at
+              )
+
+      rollback:
+        - dropTable:
+            tableName: conversation_members

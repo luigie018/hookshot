@@ -1,0 +1,83 @@
+
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-messages
+      author: Luigie
+
+      changes:
+        - createTable:
+            tableName: messages
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: conversation_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: sender_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: client_message_id
+                  type: UUID
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - addForeignKeyConstraint:
+            baseTableName: messages
+            baseColumnNames: conversation_id
+            referencedTableName: conversations
+            referencedColumnNames: id
+            constraintName: fk_message_conversation
+
+        - addUniqueConstraint:
+            tableName: messages
+            columnNames: conversation_id, sender_id, client_message_id
+            constraintName: uq_client_message
+
+        - createIndex:
+            tableName: messages
+            indexName: idx_message_history
+            columns:
+              - column:
+                  name: conversation_id
+              - column:
+                  name: created_at
+                  descending: true
+              - column:
+                  name: id
+                  descending: true
+
+        - sql:
+            sql: >
+              ALTER TABLE messages
+              ADD CONSTRAINT chk_message_content
+              CHECK (
+                char_length(trim(content))
+                BETWEEN 1 AND 4000
+              )
+
+      rollback:
+        - dropTable:
+            tableName: messages

@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hookshot_db?currentSchema=hookshot_user
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:admin123}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+services:
+  user:
+    base-url: http://localhost:8081
+    path: /v1/user

@@ -1,0 +1,68 @@
+
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-conversations
+      author: Luigie
+      changes:
+        - createTable:
+            tableName: conversations
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: name
+                  type: VARCHAR(150)
+
+              - column:
+                  name: direct_key
+                  type: VARCHAR(73)
+                  constraints:
+                    unique: true
+
+              - column:
+                  name: created_by
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: created_at
+                  type: TIMESTAMP WITH TIME ZONE
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+
+        - sql:
+            sql: >
+              ALTER TABLE conversations
+              ADD CONSTRAINT chk_conversation_type
+              CHECK (type IN ('DIRECT', 'GROUP'))
+
+        - sql:
+            sql: >
+              ALTER TABLE conversations
+              ADD CONSTRAINT chk_conversation_details
+              CHECK (
+                (type = 'DIRECT'
+                 AND name IS NULL
+                 AND direct_key IS NOT NULL)
+                OR
+                (type = 'GROUP'
+                 AND name IS NOT NULL
+                 AND direct_key IS NULL)
+              )
+
+      rollback:
+        - dropTable:
+            tableName: conversations

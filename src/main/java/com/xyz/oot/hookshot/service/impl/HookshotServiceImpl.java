@@ -24,10 +24,6 @@ public class HookshotServiceImpl implements HookshotService {
         log.info("calling user service downstream, using id={}", id);
         Mono<UserResponse> user = userServiceClient.getUserById(id);
 
-        // client for account
-
-        // client for notif
-
         return Mono.zip(user,
                         // just a sample for param2
                         user)

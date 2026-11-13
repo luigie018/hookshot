@@ -1,0 +1,10 @@
+
+databaseChangeLog:
+  - include:
+      file: db/changelog/changes/001-create-conversations.yaml
+
+  - include:
+      file: db/changelog/changes/002-create-conversation-members.yaml
+
+  - include:
+      file: db/changelog/changes/003-create-messages.yaml
