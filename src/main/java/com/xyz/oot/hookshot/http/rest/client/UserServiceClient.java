@@ -5,6 +5,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import static com.xyz.oot.hookshot.constants.User.GET_USER_URI;
+
 @Component
 public class UserServiceClient {
 
@@ -17,7 +19,7 @@ public class UserServiceClient {
 
     public Mono<UserResponse> getUserById(String id) {
         return webClient.get()
-                .uri("/id", id)
+                .uri(GET_USER_URI, id)
                 .retrieve()
                 .bodyToMono(UserResponse.class);
     }
